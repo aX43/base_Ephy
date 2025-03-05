@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche de Préconisation</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        h1, h2 {
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+            animation: slideIn 1s ease-in-out;
+        }
+        h1 {
+            font-size: 2em;
+            color: #404449;
+        }
+        h2 {
+            font-size: 1.2em;
+            color: #28a745;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .form-group {
+            margin-bottom: 15px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #000000;
+        }
+        input, select, textarea, .editable {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #000000;
+            border-radius: 4px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        input:focus, select:focus, textarea:focus, .editable:focus {
+            border-color: #3db6d4;
+            box-shadow: 0 0 5px rgba(96, 129, 165, 0.5);
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #54a7a0;
+            color: rgb(255, 255, 255);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        button:hover {
+            background-color: #6b8fb6;
+            transform: scale(1.05);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            background-color: rgb(218, 215, 215);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in-out;
+        }
+        table, th, td {
+            border: 1px solid #e2dcdc;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #adb4bb;
+            color: rgb(14, 13, 13);
+        }
+        .editable {
+            border: 1px solid #ccc;
+            min-height: 50px;
+            padding: 8px;
+            border-radius: 4px;
+            background-color: #fff;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .editable:focus {
+            border-color: #949697;
+            box-shadow: 0 0 5px rgba(173, 181, 190, 0.5);
+        }
+        .color-picker {
+            display: none;
+        }
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #d4d0d0;
+            border-radius: 4px;
+            background-color: #e3f2fd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .section:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .inline-group {
+            display: flex;
+            justify-content: space-between;
+        }
+        .inline-group .form-group {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .inline-group .form-group:last-child {
+            margin-right: 0;
+        }
+        .italic-text {
+            font-style: italic;
+        }
+        .small-italic-text {
+            font-style: italic;
+            font-size: 0.9em;
+        }
+        .download-button {
+            background-color: #28a745;
+            color: white;
+        }
+        .download-button:hover {
+            background-color: #218838;
+        }
+        .format-buttons {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .format-buttons button {
+            margin-right: 5px;
+        }
+        .preconisationOptions {
+            display: flex;
+            align-items: center;
+        }
+        .preconisationOptions p {
+            margin-right: 10px;
+        }
+        .preconisationOptions label {
+            margin-right: 10px;
+        }
+        .parcelleTable, .observationTable {
+            width: 100%;
+            margin-bottom: 10px;
+            border-collapse: collapse;
+        }
+        .parcelleTable th, .observationTable th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+        .parcelleTable td, .observationTable td {
+            padding: 8px;
+        }
+        .noPreconisation {
+            display: none;
+            color: green;
+        }
+        .preconisationSection {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>FICHE DE PRECONISATION SUITE A VISITE TECHNIQUE</h1>
+    <div class="form-group">
+        <select id="cooperative" name="cooperative" style="font-size: 1.2em; font-family: 'Roboto', sans-serif;">
+            <option value="" disabled selected>Sélectionner une coopérative</option>
+            <option value="valprim">Valprim</option>
+            <option value="coopsud">Coopsud</option>
+            <option value="agrisud">Agrisud</option>
+            <option value="cadralbret">Cadralbret</option>
+            <option value="lesprimeursdelacrau">Les Primeurs de la Crau</option>
+        </select>
+    </div>
+    <form id="preconisationForm">
+        <div class="form-group">
+            <label for="agreementNumber">N° Agrément pour le Conseil spécifique à l’utilisation de PPP</label>
+            <input type="text" id="agreementNumber" name="agreementNumber" placeholder="Numéro d'agrément">
+        </div>
+        <p class="italic-text">À la suite de la visite technique décrite ci-dessous :</p>
+        <div class="form-group">
+            <label for="producerName">Nom du producteur</label>
+            <input type="text" id="producerName" name="producerName" placeholder="Nom du producteur">
+        </div>
+        <p class="italic-text">Il est important de lire les informations présentes sur les étiquettes et de tenir compte des conseils présents dans le <a href="#">Guide des Bonnes Pratiques Phytosanitaires</a> et les <a href="#">Conditions d’utilisations</a>.</p>
+        <div class="inline-group">
+            <div class="form-group">
+                <label for="visitDate">Date</label>
+                <input type="date" id="visitDate" name="visitDate">
+            </div>
+            <div class="form-group">
+                <label for="technicianName">Suivi technique par</label>
+                <input type="text" id="technicianName" name="technicianName" placeholder="Nom du technicien">
+            </div>
+        </div>
+        <div id="sectionsContainer">
+            <div class="section">
+                <h2>DESCRIPTIF DE LA PARCELLE</h2>
+                <table class="parcelleTable">
+                    <tr>
+                        <th>Culture</th>
+                        <th>N° de bloc</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select style="font-size: 0.8em;">
+                                <option value="" disabled selected>Sélectionner une culture</option>
+                                <option value="tomate">Tomate</option>
+                                <option value="fraise">Fraise</option>
+                                <option value="concombre">Concombre</option>
+                                <option value="myrtille">Myrtille</option>
+                                <option value="courgette">Courgette</option>
+                                <option value="aubergine">Aubergine</option>
+                                <option value="kiwi">Kiwi</option>
+                            </select>
+                        </td>
+                        <td><input type="text" placeholder="N° de bloc"></td>
+                    </tr>
+                </table>
+                <div class="format-buttons">
+                    <button type="button" onclick="toggleFormat('bold')">Gras</button>
+                    <button type="button" onclick="toggleFormat('underline')">Souligné</button>
+                    <button type="button" onclick="toggleColorPicker()">Couleur</button>
+                    <input type="color" id="colorPicker" class="color-picker" onchange="applyColor()" style="display:none;">
+                </div>
+                <table class="observationTable">
+                    <tr>
+                        <th>Observations</th>
+                        <th>Diagnostic</th>
+                    </tr>
+                    <tr>
+                        <td><div class="editable" contenteditable="true" placeholder="Observations"></div></td>
+                        <td><div class="editable" contenteditable="true" placeholder="Diagnostic"></div></td>
+                    </tr>
+                </table>
+                <div class="preconisationOptions">
+                    <p>Préconisation ?</p>
+                    <label><input type="radio" name="preconisation" value="oui" onclick="togglePreconisation(true, this)"> Oui</label>
+                    <label><input type="radio" name="preconisation" value="non" onclick="togglePreconisation(false, this)"> Non</label>
+                </div>
+                <div class="preconisationSection" style="display: none;">
+                    <p>Veuillez trouver les préconisations à respecter pour la culture :</p>
+                    <table>
+                        <tr>
+                            <th>CEPP</th>
+                            <th>PRODUIT COMMERCIAL A APPLIQUER</th>
+                        </tr>
+                        <tr>
+                            <td><select><option value="cepp1">CEPP 1</option></select></td>
+                            <td><select><option value="produit1">Produit 1</option></select></td>
+                        </tr>
+                        <tr>
+                            <th>Matières actives</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Cible</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Nbr Applications autorisées par an</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>DAR</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>DRE</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Dose à appliquer si différentes de celles homologuées</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Dose homologuée</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Surface à traiter (en m²)</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Autre</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Conditions d’utilisation</th>
+                            <td><input type="text"></td>
+                        </tr>
+                    </table>
+                </div>
+                <p class="noPreconisation" style="display: none;">Aucune préconisation Phytosanitaire pour la culture</p>
+                <button type="button" onclick="removeSection(this)">Supprimer cette parcelle</button>
+            </div>
+        </div>
+        <button type="button" onclick="addSection()">Ajouter une parcelle</button>
+        <p class="italic-text">La Vérification de la présence des guides de références et connaissances des bonnes pratiques a été réalisée. Le conseiller s’efforce de communiquer ses conseils avec le plus grand soin et selon les connaissances actuelles mais sans engagement de sa part.</p>
+        <table>
+            <tr>
+                <th colspan="3">VISA</th>
+            </tr>
+            <tr>
+                <td><input type="text" placeholder="Nom Technicien"></td>
+                <td><input type="file" accept="image/*"></td>
+            </tr>
+            
+        </table>
+        <p class="small-italic-text">Attention, les données réglementaires des produits phytosanitaires ont une durée de validité de 7 jours à compter de la date de création du conseil. Il est possible que ces données aient pu évoluer depuis cette date.
+        Appliquer les produits conformément aux guides des bonnes pratiques d'application des produits phytopharmaceutiques.
+        Produits phytopharmaceutiques réservés à un usage professionnel, lire attentivement l'étiquette du produit. Tout traitement est réalisé sous la responsabilité de l'exploitant.
+        Porter des protections individuelles, respecter les doses homologuées, ne pas traiter si le vent dépasse 3 Beaufort et après rinçage, éliminer les EVPP conformément à la réglementation.
+        Pour se procurer les fiches de données sécurité, vous pouvez vous connecter au site http://www.quickfds.com ou sur l’espace Sharepoint.
+        ZNT : Zone de non-traitement - DRE : Délai de réentrée - DAR : Délai avant récolte
+        Pour toutes informations sur les méthodes alternatives, nous vous invitons à visiter le portail EcophytoPic : http://agriculture.gouv.fr/ecophytopic
+        </p>
+        <button type="button" class="download-button" onclick="generatePDF()">Télécharger PDF</button>
+    </form>
+
+    <script>
+        let colorPickerVisible = false;
+
+        function toggleFormat(formatType) {
+            let selectedText = window.getSelection();
+            let range = selectedText.getRangeAt(0);
+            let span = document.createElement("span");
+
+            // Vérifier si le format est déjà appliqué
+            if (document.queryCommandState(formatType)) {
+                document.execCommand(formatType, false, null); // Désapplique
+            } else {
+                document.execCommand(formatType, false, null); // Applique
+            }
+        }
+
+        function toggleColorPicker() {
+            const colorPicker = document.getElementById('colorPicker');
+            if (colorPickerVisible) {
+                colorPicker.style.display = 'none'; // Cache le color picker
+            } else {
+                colorPicker.style.display = 'inline'; // Affiche le color picker
+                colorPicker.focus(); // Focalise sur le color picker
+            }
+            colorPickerVisible = !colorPickerVisible; // Basculer l'état du color picker
+        }
+
+        function applyColor() {
+            const color = document.getElementById('colorPicker').value;
+            document.execCommand('foreColor', false, color);
+            // Masque le color picker après utilisation
+            document.getElementById('colorPicker').style.display = 'none';
+            colorPickerVisible = false;
+        }
+
+        function applyFormat(format) {
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const span = document.createElement('span');
+                if (format === 'bold') {
+                    span.style.fontWeight = 'bold';
+                } else if (format === 'underline') {
+                    span.style.textDecoration = 'underline';
+                }
+                range.surroundContents(span);
+            }
+        }
+
+        function applyColor() {
+            const color = document.getElementById('colorPicker').value;
+            const selection = window.getSelection();
+            if (selection.rangeCount > 0) {
+                const range = selection.getRangeAt(0);
+                const span = document.createElement('span');
+                span.style.color = color;
+                range.surroundContents(span);
+            }
+        }
+
+        function togglePreconisation(show, element) {
+            const section = element.closest('.section');
+            const preconisationSection = section.querySelector('.preconisationSection');
+            const preconisationOptions = section.querySelector('.preconisationOptions');
+            const noPreconisation = section.querySelector('.noPreconisation');
+            if (show) {
+                preconisationSection.style.display = 'block';
+                preconisationOptions.style.display = 'none';
+                noPreconisation.style.display = 'none';
+            } else {
+                preconisationSection.style.display = 'none';
+                preconisationOptions.style.display = 'none';
+                noPreconisation.style.display = 'block';
+            }
+        }
+
+        function validateForm() {
+            const notification = document.getElementById('notification');
+            const form = document.getElementById('preconisationForm');
+            if (form.checkValidity()) {
+                notification.textContent = 'Formulaire soumis avec succès!';
+                notification.className = 'notification';
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+                return true;
+            } else {
+                notification.textContent = 'Veuillez remplir tous les champs obligatoires.';
+                notification.className = 'notification error';
+                notification.style.display = 'block';
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+                return false;
+            }
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+    <script>
+    const { jsPDF } = window.jspdf;
+
+        function generatePDF() {
+            const opName = document.getElementById('opName').value;
+            const agreementNumber = document.getElementById('agreementNumber').value;
+            const producerName = document.getElementById('producerName').value;
+            const visitDate = document.getElementById('visitDate').value;
+            const technicianName = document.getElementById('technicianName').value;
+
+            const doc = new jsPDF();
+            doc.setFontSize(12);
+            doc.text("FICHE DE PRECONISATION SUITE A VISITE TECHNIQUE", 10, 10);
+            doc.text(`OP: ${opName}`, 10, 20);
+            doc.text(`N° Agrément pour le Conseil spécifique à l’utilisation de PPP: ${agreementNumber}`, 10, 30);
+            doc.text("À la suite de la visite technique décrite ci-dessous :", 10, 40);
+            doc.text(`Nom du producteur: ${producerName}`, 10, 50);
+            doc.text("Il est important de lire les informations présentes sur les étiquettes et de tenir compte des conseils présents dans le Guide des Bonnes Pratiques Phytosanitaires et les Conditions d’utilisations.", 10, 60);
+            doc.text(`Date: ${visitDate}`, 10, 70);
+            doc.text(`Suivi technique par: ${technicianName}`, 10, 80);
+            doc.text("DESCRIPTIF DE LA PARCELLE", 10, 90);
+
+            const sections = document.querySelectorAll('.section');
+            sections.forEach((section, index) => {
+                const parcelleTable = section.querySelector('.parcelleTable');
+                const observationTable = section.querySelector('.observationTable');
+
+                doc.autoTable({ html: parcelleTable, startY: doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 100 });
+                doc.autoTable({ html: observationTable, startY: doc.lastAutoTable.finalY + 10 });
+            });
+
+            const preconisationSections = document.querySelectorAll('.preconisationSection');
+            preconisationSections.forEach((preconisationSection) => {
+                if (preconisationSection.style.display !== 'none') {
+                    const preconisationTable = preconisationSection.querySelector('table');
+                    doc.autoTable({ html: preconisationTable, startY: doc.lastAutoTable.finalY + 10 });
+                }
+            });
+
+            doc.save('fiche_preconisation.pdf');
+        }
+
+        function togglePreconisation(show, element) {
+            const section = element.closest('.section');
+            const preconisationSection = section.querySelector('.preconisationSection');
+            const preconisationOptions = section.querySelector('.preconisationOptions');
+            const noPreconisation = section.querySelector('.noPreconisation');
+            if (show) {
+                preconisationSection.style.display = 'block';
+                preconisationOptions.style.display = 'none';
+                noPreconisation.style.display = 'none';
+            } else {
+                preconisationSection.style.display = 'none';
+                preconisationOptions.style.display = 'none';
+                noPreconisation.style.display = 'block';
+            }
+        }
+
+        function addSection() {
+            const container = document.getElementById('sectionsContainer');
+            const newSection = document.createElement('div');
+            newSection.className = 'section';
+            newSection.innerHTML = `
+                <h2>DESCRIPTIF DE LA PARCELLE</h2>
+                <table class="parcelleTable">
+                    <tr>
+                        <th>Culture</th>
+                        <th>N° de bloc</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select>
+                                <option value="" disabled selected>Sélectionner une culture</option>
+                                <option value="tomate">Tomate</option>
+                                <option value="fraise">Fraise</option>
+                                <option value="concombre">Concombre</option>
+                                <option value="myrtille">Myrtille</option>
+                                <option value="courgette">Courgette</option>
+                                <option value="aubergine">Aubergine</option>
+                                <option value="kiwi">Kiwi</option>
+                                <!-- Add more options as needed -->
+                            </select>
+                        </td>
+                        <td><input type="text" placeholder="N° de bloc"></td>
+                    </tr>
+                </table>
+                <div class="format-buttons">
+                    <button type="button" onclick="toggleFormat('bold')">Gras</button>
+                    <button type="button" onclick="toggleFormat('underline')">Souligné</button>
+                    <button type="button" onclick="toggleColorPicker()">Couleur</button>
+                    <input type="color" id="colorPicker" class="color-picker" onchange="applyColor()" style="display:none;">
+                </div>
+                <table class="observationTable">
+                    <tr>
+                        <th>Observations</th>
+                        <th>Diagnostic</th>
+                    </tr>
+                    <tr>
+                        <td><div class="editable" contenteditable="true" placeholder="Observations"></div></td>
+                        <td><div class="editable" contenteditable="true" placeholder="Diagnostic"></div></td>
+                    </tr>
+                </table>
+                <div class="preconisationOptions">
+                    <p>Préconisation ?</p>
+                    <label><input type="radio" name="preconisation" value="oui" onclick="togglePreconisation(true, this)"> Oui</label>
+                    <label><input type="radio" name="preconisation" value="non" onclick="togglePreconisation(false, this)"> Non</label>
+                </div>
+                <div class="preconisationSection" style="display: none;">
+                    <p>Veuillez trouver les préconisations à respecter pour la culture :</p>
+                    <table>
+                        <tr>
+                            <th>CEPP</th>
+                            <th>PRODUIT COMMERCIAL A APPLIQUER</th>
+                        </tr>
+                        <tr>
+                            <td><select><option value="cepp1">CEPP 1</option></select></td>
+                            <td><select><option value="produit1">Produit 1</option></select></td>
+                        </tr>
+                        <tr>
+                            <th>Matières actives</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Cible</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Nbr Applications autorisées par an</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>DAR</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Dose à appliquer si différentes de celles homologuées</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Dose homologuée</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Surface à traiter (en m²)</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Autre</th>
+                            <td><input type="text"></td>
+                        </tr>
+                        <tr>
+                            <th>Conditions d’utilisation</th>
+                            <td><input type="text"></td>
+                        </tr>
+                    </table>
+                </div>
+                <p class="noPreconisation" style="display: none;">Aucune préconisation Phytosanitaire pour la culture</p>
+                <button type="button" onclick="removeSection(this)">Supprimer cette parcelle</button>
+            `;
+            container.appendChild(newSection);
+        }
+
+        function removeSection(button) {
+            const section = button.closest('.section');
+            section.remove();
+        }
+    </script>
+</body>
+</html>
+
